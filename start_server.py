@@ -17,7 +17,7 @@ if __name__ == "__main__":
     print("Press CTRL+C to stop")
     print()
     print("Open your browser and navigate to:")
-    print("  → http://localhost:8000")
+    print("  > http://localhost:8000")
     print()
     print("=" * 60)
 
@@ -25,6 +25,6 @@ if __name__ == "__main__":
         "pptx_accessibility.api.app:app",
         host="localhost",
         port=8000,
-        reload=True,  # Auto-reload on code changes
+        reload=False,  # Disabled to prevent app.state reset issues
         log_level="info"
     )

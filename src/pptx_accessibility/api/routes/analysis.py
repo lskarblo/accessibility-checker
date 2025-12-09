@@ -44,10 +44,12 @@ async def analyze_presentation(
     Returns:
         Analysis results with findings and scores
     """
-    from pptx_accessibility.api.app import session_manager
+    from pptx_accessibility.api.app import get_session_manager
 
-    if session_manager is None:
-        raise HTTPException(status_code=500, detail="Session manager not initialized")
+    try:
+        session_manager = get_session_manager()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     # Get session
     session = await session_manager.get_session(session_id)
@@ -62,11 +64,12 @@ async def analyze_presentation(
 
     logger.info(f"Starting analysis for session {session_id}")
 
-    # Get uploaded file path
-    file_path = session_manager.storage_root / "uploads" / session_id / session["filename"]
+    # Get uploaded file path (file is always saved as "original.pptx" or "original.pdf")
+    file_extension = ".pptx" if session["file_type"] == "pptx" else ".pdf"
+    file_path = session_manager.storage_root / "uploads" / session_id / f"original{file_extension}"
 
     if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Uploaded file not found")
+        raise HTTPException(status_code=404, detail=f"Uploaded file not found at {file_path}")
 
     try:
         # Load presentation
@@ -122,10 +125,12 @@ async def get_findings(
     Returns:
         List of findings with optional filtering
     """
-    from pptx_accessibility.api.app import session_manager
+    from pptx_accessibility.api.app import get_session_manager
 
-    if session_manager is None:
-        raise HTTPException(status_code=500, detail="Session manager not initialized")
+    try:
+        session_manager = get_session_manager()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     # Get session
     session = await session_manager.get_session(session_id)
@@ -166,10 +171,12 @@ async def get_scores(
     Returns:
         Accessibility scores and metrics
     """
-    from pptx_accessibility.api.app import session_manager
+    from pptx_accessibility.api.app import get_session_manager
 
-    if session_manager is None:
-        raise HTTPException(status_code=500, detail="Session manager not initialized")
+    try:
+        session_manager = get_session_manager()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     # Get session
     session = await session_manager.get_session(session_id)

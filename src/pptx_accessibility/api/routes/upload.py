@@ -16,10 +16,12 @@ async def upload_file(file: UploadFile = File(...)):
     Returns:
         Session information including session_id and file_type
     """
-    from pptx_accessibility.api.app import session_manager
+    from pptx_accessibility.api.app import get_session_manager
 
-    if session_manager is None:
-        raise HTTPException(status_code=500, detail="Session manager not initialized")
+    try:
+        session_manager = get_session_manager()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     # Validate file type
     if not file.filename:
@@ -75,10 +77,12 @@ async def get_session(session_id: str):
     Returns:
         Session data
     """
-    from pptx_accessibility.api.app import session_manager
+    from pptx_accessibility.api.app import get_session_manager
 
-    if session_manager is None:
-        raise HTTPException(status_code=500, detail="Session manager not initialized")
+    try:
+        session_manager = get_session_manager()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     try:
         session_data = await session_manager.get_session(session_id)
@@ -100,10 +104,12 @@ async def delete_session(session_id: str):
     Returns:
         Confirmation message
     """
-    from pptx_accessibility.api.app import session_manager
+    from pptx_accessibility.api.app import get_session_manager
 
-    if session_manager is None:
-        raise HTTPException(status_code=500, detail="Session manager not initialized")
+    try:
+        session_manager = get_session_manager()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     try:
         await session_manager.delete_session(session_id)

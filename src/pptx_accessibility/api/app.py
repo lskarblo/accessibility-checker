@@ -11,21 +11,16 @@ from loguru import logger
 from pptx_accessibility.core.config import settings
 from pptx_accessibility.core.session_manager import SessionManager
 
-# Global session manager instance
-session_manager: SessionManager | None = None
-
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app_instance: FastAPI):
     """Application lifespan manager."""
-    global session_manager
-
     # Startup
     logger.info("Starting PowerPoint & PDF Accessibility Checker")
     logger.info(f"Storage root: {settings.storage_root}")
 
-    # Initialize session manager
-    session_manager = SessionManager(settings.storage_root)
+    # Initialize session manager in app state
+    app_instance.state.session_manager = SessionManager(settings.storage_root)
 
     logger.info("Application started successfully")
 
@@ -35,13 +30,25 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down application")
 
 
-# Create FastAPI app
+# Create FastAPI app with lifespan
 app = FastAPI(
     title="PowerPoint & PDF Accessibility Checker",
     description="Automatic accessibility adaptation of PowerPoint and PDF documents",
     version="0.1.0",
     lifespan=lifespan,
 )
+
+
+def get_session_manager() -> SessionManager:
+    """Get the session manager instance from app state.
+
+    Raises:
+        RuntimeError: If session manager is not initialized
+    """
+    if not hasattr(app.state, "session_manager") or app.state.session_manager is None:
+        logger.error("Session manager not initialized in app.state!")
+        raise RuntimeError("Session manager not initialized")
+    return app.state.session_manager
 
 # CORS middleware
 app.add_middleware(
