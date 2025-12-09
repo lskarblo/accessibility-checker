@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerPoint & PDF Tillgänglighetsanpassning</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PowerPoint & PDF Tillgänglighetsanpassning</h1>
+            <p>Automatisk tillgänglighetsanpassning enligt WCAG 2.1 AA, Microsoft Accessibility Guidelines och PDF/UA</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <h2>Ladda upp fil</h2>
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <p>Dra och släpp en PPTX eller PDF-fil här</p>
+                    <p class="or-text">eller</p>
+                    <label for="file-input" class="file-input-label">
+                        <input type="file" id="file-input" accept=".pptx,.pdf" hidden>
+                        <span class="btn">Välj fil</span>
+                    </label>
+                </div>
+
+                <div id="file-info" class="file-info" style="display: none;">
+                    <p><strong>Vald fil:</strong> <span id="filename"></span></p>
+                    <p><strong>Filstorlek:</strong> <span id="filesize"></span></p>
+                    <p><strong>Filtyp:</strong> <span id="filetype"></span></p>
+                </div>
+
+                <div id="upload-progress" class="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p id="progress-text">Laddar upp...</p>
+                </div>
+
+                <div id="upload-result" class="upload-result" style="display: none;">
+                    <div class="success-message">
+                        <span class="success-icon">✓</span>
+                        <p>Filen har laddats upp!</p>
+                        <p class="session-id">Session ID: <span id="session-id"></span></p>
+                        <button id="analyze-btn" class="btn btn-primary">Starta analys</button>
+                    </div>
+                </div>
+
+                <div id="error-message" class="error-message" style="display: none;"></div>
+            </section>
+
+            <section id="analysis-section" class="analysis-section" style="display: none;">
+                <h2>Analys pågår</h2>
+                <div class="analysis-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="analysis-progress-fill"></div>
+                    </div>
+                    <p id="analysis-status">Startar analys...</p>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section" style="display: none;">
+                <h2>Analysresultat</h2>
+                <div class="score-card">
+                    <div class="score-circle">
+                        <span id="overall-score" class="score-value">-</span>
+                        <span class="score-label">Poäng</span>
+                    </div>
+                    <div class="score-details">
+                        <p><strong>Betyg:</strong> <span id="grade">-</span></p>
+                        <p><strong>Totalt antal fynd:</strong> <span id="total-findings">0</span></p>
+                        <p><strong>Fynd per slide:</strong> <span id="findings-per-slide">0</span></p>
+                    </div>
+                </div>
+
+                <div class="severity-breakdown">
+                    <h3>Fynd per allvarlighetsgrad</h3>
+                    <div class="severity-grid">
+                        <div class="severity-item severity-critical">
+                            <span class="severity-count" id="count-critical">0</span>
+                            <span class="severity-name">Kritiska</span>
+                        </div>
+                        <div class="severity-item severity-high">
+                            <span class="severity-count" id="count-high">0</span>
+                            <span class="severity-name">Höga</span>
+                        </div>
+                        <div class="severity-item severity-medium">
+                            <span class="severity-count" id="count-medium">0</span>
+                            <span class="severity-name">Medel</span>
+                        </div>
+                        <div class="severity-item severity-low">
+                            <span class="severity-count" id="count-low">0</span>
+                            <span class="severity-name">Låga</span>
+                        </div>
+                        <div class="severity-item severity-info">
+                            <span class="severity-count" id="count-info">0</span>
+                            <span class="severity-name">Info</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="view-findings-btn" class="btn btn-primary">Granska fynd</button>
+                    <button id="new-analysis-btn" class="btn btn-secondary">Ladda upp ny fil</button>
+                </div>
+            </section>
+
+            <section class="rules-section">
+                <h2>Regler som kommer att kontrolleras</h2>
+                <div class="rules-grid">
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_01">
+                        <span>1. Struktur och läsordning</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_02">
+                        <span>2. Alt-texter (AI-genererade)</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_03">
+                        <span>3. Färg och kontrast</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_04">
+                        <span>4. Typsnitt och textformat</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_05">
+                        <span>5. Layouter och mallar</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_06">
+                        <span>6. Tabeller och diagram</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_07">
+                        <span>7. Multimedia</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_08">
+                        <span>8. Hyperlänkar</span>
+                    </label>
+                    <label class="rule-checkbox">
+                        <input type="checkbox" checked data-rule="rule_09">
+                        <span>9. Animationer och rörelser</span>
+                    </label>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Capio Sankt Görans Sjukhus AB</p>
+        </footer>
+    </div>
+
+    <script src="js/upload.js"></script>
+</body>
+</html>
